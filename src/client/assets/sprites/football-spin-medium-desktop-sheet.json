@@ -1,0 +1,90 @@
+{ "frames": [
+   {
+    "filename": "football-spin-medium-desktop 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 1.aseprite",
+    "frame": { "x": 12, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 2.aseprite",
+    "frame": { "x": 24, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 3.aseprite",
+    "frame": { "x": 36, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 4.aseprite",
+    "frame": { "x": 48, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 5.aseprite",
+    "frame": { "x": 60, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 6.aseprite",
+    "frame": { "x": 72, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-medium-desktop 7.aseprite",
+    "frame": { "x": 84, "y": 0, "w": 12, "h": 30 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 30 },
+    "sourceSize": { "w": 12, "h": 30 },
+    "duration": 150
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.11-x64",
+  "image": "football-spin-medium-desktop.png",
+  "format": "RGBA8888",
+  "size": { "w": 96, "h": 30 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
