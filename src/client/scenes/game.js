@@ -57,6 +57,6 @@ export class Game extends Scene {
 
     this.football = new Football(this, 350, 500);
     this.kicker = new Kicker(this, 75, 550);
-    this.kicker.moveToAndKick(this.football, 350, 500);
+    this.kicker.moveToAndKick(this.football, 350, 500, 100, );
   }
 }

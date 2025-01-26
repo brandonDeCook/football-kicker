@@ -1,0 +1,90 @@
+{ "frames": [
+   {
+    "filename": "football-spin-small 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 1.aseprite",
+    "frame": { "x": 8, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 2.aseprite",
+    "frame": { "x": 16, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 3.aseprite",
+    "frame": { "x": 24, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 4.aseprite",
+    "frame": { "x": 32, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 5.aseprite",
+    "frame": { "x": 40, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 6.aseprite",
+    "frame": { "x": 48, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   },
+   {
+    "filename": "football-spin-small 7.aseprite",
+    "frame": { "x": 56, "y": 0, "w": 8, "h": 20 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 20 },
+    "sourceSize": { "w": 8, "h": 20 },
+    "duration": 150
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.11-x64",
+  "image": "football-spin-small-sheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 64, "h": 20 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
