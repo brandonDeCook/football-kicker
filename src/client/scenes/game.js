@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import Kicker from "../objects/kicker";
+import Football from "../objects/football";
 
 export class Game extends Scene {
   constructor() {
@@ -12,10 +13,12 @@ export class Game extends Scene {
     this.load.image("cloudSmall", "./assets/sprites/cloud-small-desktop.png");
     this.load.image("cloudLarge", "./assets/sprites/cloud-large-desktop.png");
     Kicker.preload(this);
+    Football.preload(this);
   }
 
   create() {
     Kicker.create(this);
+    Football.create(this);
     const { width, height } = this.scale;
     
 
@@ -48,9 +51,12 @@ export class Game extends Scene {
     addCloudTween(this.cloudSmall2, 30000, 50);
     addCloudTween(this.cloudLarge1, 70000, 100);
 
-    this.add.image(width / 2, 178, "goalPost").setOrigin(0.5, 0.5);
+    this.goalPost = this.add.image(width / 2, 178, "goalPost").setOrigin(0.5, 0.5);
+    this.goalPost.setDepth(5);
+    console.log(this.goalPost.depth);
 
+    this.football = new Football(this, 350, 500);
     this.kicker = new Kicker(this, 75, 550);
-    this.kicker.moveToAndKick(350, 500);
+    this.kicker.moveToAndKick(this.football, 350, 500);
   }
 }
