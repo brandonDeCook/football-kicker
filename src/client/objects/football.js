@@ -86,22 +86,34 @@ export default class Football extends Phaser.GameObjects.Sprite {
     switch (newState) {
       case "idle":
         this.play("football-idle");
+        this.currentState = "idle";
         break;
       case "spin-med":
         this.play("football-spin-medium");
+        this.currentState = "spin-med";
         break;
       case "spin-small":
         this.play("football-spin-small");
+        this.currentState = "spin-small";
         break;
       default:
         this.play("football-idle");
+        this.currentState = "idle";
         break;
+    }
+  }
+
+  preUpdate(time, delta) {
+    super.preUpdate(time, delta);
+
+    if ((this.currentState == "spin-small") & (this.y >= 280)) {
+      this.destroy();
     }
   }
 
   kick(xDrift, apexHeight, upDuration, downDuration) {
     const startX = this.x;
-    const startY = this.y / 2;
+    const startY = this.y / 2 + 100;
 
     this.scene.tweens.chain({
       tweens: [
@@ -133,6 +145,4 @@ export default class Football extends Phaser.GameObjects.Sprite {
       },
     });
   }
-
-  update() {}
 }
