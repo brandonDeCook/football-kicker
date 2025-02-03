@@ -3,7 +3,7 @@ import { Menu } from "./scenes/menu";
 import AwaitLoaderPlugin from "phaser3-rex-plugins/plugins/awaitloader-plugin.js";
 
 
-const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+const isMobile = false; ///Mobi|Android/i.test(navigator.userAgent);
 
 const config = {
   type: Phaser.AUTO,

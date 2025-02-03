@@ -18,8 +18,8 @@ export default class Kicker extends Phaser.GameObjects.Sprite {
   }
 
   static preload(scene) {
-    const isMobile =
-      scene.sys.game.device.os.iOS || scene.sys.game.device.os.android;
+    const isMobile = false;
+      //scene.sys.game.device.os.iOS || scene.sys.game.device.os.android;
 
     let runImagePath, runJsonPath;
     let idleImagePath, idleJsonPath;
@@ -120,7 +120,17 @@ export default class Kicker extends Phaser.GameObjects.Sprite {
     }
   }
 
-  moveToAndKick(football, targetX, targetY, speed = 100, xDrift = 60, apexHeight = 400, upDuration = 2500, downDuration = 2000) {
+  moveToAndKick(
+    football,
+    targetX,
+    targetY,
+    speed = 100,
+    xDrift = 60,
+    apexHeight = 400,
+    upDuration = 2500,
+    downDuration = 2000,
+    isFar = true
+  ) {
     if (this.moveTween) {
       this.moveTween.stop();
     }
@@ -145,7 +155,7 @@ export default class Kicker extends Phaser.GameObjects.Sprite {
 
         const onKickFrame = (anim, frame) => {
           if (anim.key === "kick" && frame.index === 3) {
-            football.kick(xDrift, apexHeight, upDuration, downDuration);
+            football.kick(xDrift, apexHeight, upDuration, downDuration, isFar);
             this.off("animationupdate", onKickFrame, this);
           }
         };

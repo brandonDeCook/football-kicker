@@ -12,8 +12,8 @@ export class Menu extends Scene {
       true
     );
     this.load.audio("buttonSelect", "assets/sounds/buttonSelect.wav");
-    this.load.image("football-mobile", "assets/football-title-mobile.png"); // Load the football image
-    this.load.image("football-desktop", "assets/football-title-desktop.png"); // Load the football image
+    this.load.image("football-mobile", "assets/football-title-mobile.png");
+    this.load.image("football-desktop", "assets/football-title-desktop.png");
   }
 
   create() {
@@ -24,12 +24,12 @@ export class Menu extends Scene {
   }
 
   delayedCreate() {
-    const isMobile =
-      this.sys.game.device.os.android ||
+    const isMobile = false;
+      /**this.sys.game.device.os.android ||
       this.sys.game.device.os.iOS ||
       this.sys.game.device.os.iPad ||
-      this.sys.game.device.os.iPhone;
-    
+      this.sys.game.device.os.iPhone;**/
+
     const titleText = this.add.text(
       this.cameras.main.centerX,
       this.cameras.main.centerY - 100,
@@ -43,7 +43,6 @@ export class Menu extends Scene {
     );
     titleText.setOrigin(0.5);
 
-    // Add the football image
     const football = this.add.image(
       this.cameras.main.centerX,
       this.cameras.main.centerY,

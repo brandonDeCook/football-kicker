@@ -17,6 +17,8 @@ export class Game extends Scene {
     this.load.image("cloudLarge", "./assets/sprites/cloud-large-desktop.png");
 
     this.load.audio("barPause", "assets/sounds/barPause.wav");
+    this.load.audio("refWhistle", "assets/sounds/refWhistle.wav");
+    this.load.audio("goal", "assets/sounds/goal.wav");
 
     Kicker.preload(this);
     Football.preload(this);
@@ -47,17 +49,62 @@ export class Game extends Scene {
     this.createUI(width);
     this.createGameObjects();
 
+    this.score = 0;
+    this.scoreAdded = false;
+
+    const padding = 10;
+    this.scoreText = this.add
+      .text(width - padding, padding, `Score: ${this.score}`, {
+        fontFamily: "standard",
+        fontSize: "16px",
+        color: "#ffffff",
+      })
+      .setOrigin(1, 0);
+
+    this.input.enabled = false;
+
+    let countdownValue = 3;
+    this.countdownText = this.add
+      .text(width / 2, height / 2, countdownValue, {
+        fontFamily: "standard",
+        fontSize: "64px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5, 0.5)
+      .setDepth(7);
+
+    this.time.addEvent({
+      delay: 1300,
+      repeat: 2,
+      callback: () => {
+        countdownValue--;
+
+        if (countdownValue == 0) {
+          this.countdownText.destroy();
+          this.input.enabled = true;
+          this.sound.play("refWhistle");
+        } else {
+          this.countdownText.setText(countdownValue);
+        }
+      },
+      callbackScope: this,
+    });
+
     this.setupInput();
   }
 
   update(time, delta) {
-    if (this.state === "kickInProgress" && !this.footballInGoal && this.football) {
+    if (
+      this.state === "kickInProgress" &&
+      !this.footballInGoal &&
+      this.football
+    ) {
       if (this.football.y > this.prevFootballY) {
         const goalLeft = this.goalPost.x - this.goalPost.displayWidth / 2;
         const goalRight = this.goalPost.x + this.goalPost.displayWidth / 2;
         const goalTop = this.goalPost.y - this.goalPost.displayHeight / 2;
         const goalBottom = this.goalPost.y + this.goalPost.displayHeight / 2;
-  
+
         if (
           this.football.x > goalLeft &&
           this.football.x < goalRight &&
@@ -65,18 +112,61 @@ export class Game extends Scene {
           this.football.y < goalBottom
         ) {
           this.footballInGoal = true;
-          console.log("Goal scored!");
+          if (!this.scoreAdded) {
+            // Calculate and update score
+            const kickScore = Math.round(
+              this.lastKickPowerRatio * (1 - this.lastKickErrorImpact) * 100
+            );
+            this.score += kickScore;
+            this.scoreText.setText(`Score: ${this.score}`);
+            this.scoreAdded = true;
+            console.log(`Goal scored! +${kickScore} points`);
+
+            // Play the goal sound
+            this.sound.play("goal");
+
+            // Position the text just above the goalPost.
+            // Here we subtract a little extra (10 pixels) from the top edge of the goalPost.
+            const goalX = this.goalPost.x;
+            const goalY = this.goalPost.y - this.goalPost.displayHeight / 2 - 10;
+
+            // Create the text with a 24px font size.
+            const goalText = this.add.text(goalX, goalY, "GOAL SCORED!", {
+              fontFamily: "standard",
+              fontSize: "24px",
+              color: "#ffffff", // start with white
+            })
+              .setOrigin(0.5)
+              .setDepth(8); // ensure it appears on top
+
+            // Create a timed event to toggle the text color every 100ms.
+            const flashEvent = this.time.addEvent({
+              delay: 100,
+              loop: true,
+              callback: () => {
+                // Toggle between white and black
+                if (goalText.style.color === "#ffffff") {
+                  goalText.setColor("#000000");
+                } else {
+                  goalText.setColor("#ffffff");
+                }
+              },
+            });
+
+            // Remove the flashing text (and its flash event) after 1.5 seconds.
+            this.time.delayedCall(1500, () => {
+              flashEvent.remove();
+              goalText.destroy();
+            });
+          }
         }
       }
-  
       this.prevFootballY = this.football.y;
     }
-  }  
+  }
 
   createBackground(width, height) {
-    this.add
-      .image(width / 2, height / 2, "mainBackground")
-      .setOrigin(0.5, 0.5);
+    this.add.image(width / 2, height / 2, "mainBackground").setOrigin(0.5, 0.5);
   }
 
   createClouds(sceneWidth) {
@@ -108,9 +198,18 @@ export class Game extends Scene {
     ];
 
     clouds.forEach((cloudConfig) => {
-      const cloud = this.add.image(cloudConfig.x, cloudConfig.y, cloudConfig.key);
+      const cloud = this.add.image(
+        cloudConfig.x,
+        cloudConfig.y,
+        cloudConfig.key
+      );
       cloud.metaData = cloudConfig.meta;
-      this.animateCloud(cloud, cloudConfig.tweenDuration, cloudConfig.endXOffset, sceneWidth);
+      this.animateCloud(
+        cloud,
+        cloudConfig.tweenDuration,
+        cloudConfig.endXOffset,
+        sceneWidth
+      );
     });
   }
 
@@ -131,8 +230,35 @@ export class Game extends Scene {
   }
 
   createUI(sceneWidth) {
-    this.createAccuracyBar(625, 265, 20, 8, 20, 20);
-    this.createPowerBar(705, 240, 20, 20, 8, 15);
+    const barHeight = 20;
+
+    const accuracyBarBottomY = 285;
+    const accuracyBarX = 625;
+    const accuracyBarY = accuracyBarBottomY - barHeight;
+    const accuracyBarConfig = this.createBar(
+      accuracyBarX,
+      accuracyBarY,
+      21,
+      8,
+      barHeight,
+      "Accuracy"
+    );
+    this.accuracyBar.bars = accuracyBarConfig.bars;
+    this.animateAccuracyBars(20);
+
+    const powerBarBottomY = accuracyBarBottomY - 35;
+    const powerBarX = 625;
+    const powerBarY = powerBarBottomY - barHeight;
+    const powerBarConfig = this.createBar(
+      powerBarX,
+      powerBarY,
+      21,
+      8,
+      barHeight,
+      "Power"
+    );
+    this.powerBar.bars = powerBarConfig.bars;
+    this.animatePowerBars(15);
     this.powerBar.animation.paused = true;
 
     this.goalPost = this.add
@@ -141,23 +267,31 @@ export class Game extends Scene {
     this.goalPost.setDepth(5);
   }
 
-  createAccuracyBar(x, y, numBars, barWidth, barHeight, delay) {
-    this.accuracyBar.bars = [];
-    const barContainer = this.add.container(x, y);
-
+  createBar(x, y, numBars, segmentWidth, segmentHeight, labelText) {
+    const container = this.add.container(x, y);
+    let bars = [];
     for (let i = 0; i < numBars; i++) {
-      const bar = this.add.rectangle(
-        i * barWidth,
+      const rect = this.add.rectangle(
+        i * segmentWidth,
         0,
-        barWidth - 2,
-        barHeight,
+        segmentWidth - 2,
+        segmentHeight,
         0x000000
       );
-      this.accuracyBar.bars.push(bar);
-      barContainer.add(bar);
+      bars.push(rect);
+      container.add(rect);
     }
 
-    this.animateAccuracyBars(delay);
+    const labelX = x - 3;
+    const labelY = y + segmentHeight - 8;
+    const label = this.add.text(labelX, labelY, labelText, {
+      fontFamily: "standard",
+      fontSize: "12px",
+      color: "#ffffff",
+    });
+    label.setOrigin(0, 0);
+
+    return { container, bars };
   }
 
   animateAccuracyBars(delay) {
@@ -197,24 +331,6 @@ export class Game extends Scene {
     });
   }
 
-  createPowerBar(x, y, numBars, barWidth, barHeight, delay) {
-    const barContainer = this.add.container(x, y);
-
-    for (let i = 0; i < numBars; i++) {
-      const bar = this.add.rectangle(
-        0,
-        -i * barHeight,
-        barWidth - 2,
-        barHeight - 2,
-        0x000000
-      );
-      this.powerBar.bars.push(bar);
-      barContainer.add(bar);
-    }
-
-    this.animatePowerBars(delay);
-  }
-
   animatePowerBars(delay) {
     this.powerBar.buildingUp = true;
     this.powerBar.currentIndex = 0;
@@ -224,21 +340,22 @@ export class Game extends Scene {
       loop: true,
       callback: () => {
         if (this.powerBar.buildingUp) {
-          this.powerBar.bars[this.powerBar.currentIndex].fillColor = 0xffffff;
           this.powerBar.currentIndex++;
-
           if (this.powerBar.currentIndex >= this.powerBar.bars.length) {
+            this.powerBar.currentIndex = this.powerBar.bars.length;
             this.powerBar.buildingUp = false;
-            this.powerBar.currentIndex = this.powerBar.bars.length - 1;
           }
         } else {
-          this.powerBar.bars[this.powerBar.currentIndex].fillColor = 0x000000;
           this.powerBar.currentIndex--;
-
-          if (this.powerBar.currentIndex < 0) {
-            this.powerBar.buildingUp = true;
+          if (this.powerBar.currentIndex <= 0) {
             this.powerBar.currentIndex = 0;
+            this.powerBar.buildingUp = true;
           }
+        }
+
+        for (let i = 0; i < this.powerBar.bars.length; i++) {
+          this.powerBar.bars[i].fillColor =
+            i < this.powerBar.currentIndex ? 0xffffff : 0x000000;
         }
       },
     });
@@ -279,15 +396,49 @@ export class Game extends Scene {
       this.sound.play("barPause");
       this.powerBar.animation.paused = true;
 
+      const power = this.powerBar.currentIndex;
+      const maxPower = this.powerBar.bars.length;
+      const powerRatio = power / maxPower;
+
+      const numAccuracyBars = this.accuracyBar.bars.length;
+      const midIndex = Math.floor(numAccuracyBars / 2);
+      const accuracyDifference = Math.abs(
+        this.accuracyBar.currentSelectedIndex - midIndex
+      );
+      const errorRatio = accuracyDifference / midIndex;
+      const errorImpact = errorRatio * errorRatio;
+
+      this.lastKickPowerRatio = powerRatio;
+      this.lastKickErrorImpact = errorImpact;
+
+      const baseXDrift = 60;
+      const driftMultiplier = 35;
+      let xDrift = baseXDrift * (1 + errorImpact * driftMultiplier);
+      if (this.accuracyBar.currentSelectedIndex < midIndex) {
+        xDrift = xDrift * -1;
+      }
+
+      const baseApexHeight = 400;
+      const apexHeight = baseApexHeight * (0.5 + powerRatio);
+
+      const baseUpDuration = 2000;
+      const baseDownDuration = 2500;
+      const upDuration = baseUpDuration * (0.8 + powerRatio * 0.4);
+      const downDuration = baseDownDuration * (0.8 + powerRatio * 0.4);
+
+      const speed = 100;
+      const targetX = 350;
+      const targetY = 500;
+
       this.kicker.moveToAndKick(
         this.football,
-        350,
-        500,
-        100,
-        60,
-        400,
-        2500,
-        2000
+        targetX,
+        targetY,
+        speed,
+        xDrift,
+        apexHeight,
+        upDuration,
+        downDuration
       );
 
       this.time.delayedCall(
@@ -317,5 +468,7 @@ export class Game extends Scene {
     this.powerBar.bars.forEach((bar) => {
       bar.fillColor = 0x000000;
     });
+
+    this.scoreAdded = false;
   }
 }

@@ -9,8 +9,8 @@ export default class Football extends Phaser.GameObjects.Sprite {
   }
 
   static preload(scene) {
-    const isMobile =
-      scene.sys.game.device.os.android || scene.sys.game.device.os.iOS;
+    const isMobile = false;
+      //scene.sys.game.device.os.android || scene.sys.game.device.os.iOS;
 
     let spinMedImagePath;
     let spinMedJsonPath;
@@ -111,9 +111,9 @@ export default class Football extends Phaser.GameObjects.Sprite {
     }
   }
 
-  kick(xDrift, apexHeight, upDuration, downDuration) {
+  kick(xDrift, apexHeight, upDuration, downDuration, isFar) {
     const startX = this.x;
-    const startY = this.y / 2 + 100;
+    const startY = this.y;
 
     this.scene.tweens.chain({
       tweens: [
@@ -122,7 +122,7 @@ export default class Football extends Phaser.GameObjects.Sprite {
           x: startX + xDrift * 0.5,
           y: startY - apexHeight,
           duration: upDuration,
-          ease: "Power2",
+          ease: "Power0",
           onStart: () => {
             this.setState("spin-med");
             this.setDepth(6);
@@ -133,10 +133,10 @@ export default class Football extends Phaser.GameObjects.Sprite {
           x: startX + xDrift,
           y: startY,
           duration: downDuration,
-          ease: "Power2",
+          ease: "Linear",
           onStart: () => {
-            this.setState("spin-small");
-            this.setDepth(3);
+            this.setState(isFar ? "spin-small" : "spin-med");
+            this.setDepth(isFar ? 3 : 6);
           },
         },
       ],
