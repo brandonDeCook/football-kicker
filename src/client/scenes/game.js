@@ -25,6 +25,7 @@ export class Game extends Scene {
 
     this.state = "ready";
     this.kickInProgressDuration = 6700;
+    this.debug = false;
 
     this.accuracyBar = { animation: null, bars: [], currentSelectedIndex: 0 };
     this.powerBar = {
@@ -100,10 +101,22 @@ export class Game extends Scene {
       this.football
     ) {
       if (this.football.y > this.prevFootballY) {
-        const goalLeft = this.goalPost.x - this.goalPost.displayWidth / 2;
-        const goalRight = this.goalPost.x + this.goalPost.displayWidth / 2;
+        const goalLeft = this.goalPost.x - this.goalPost.displayWidth / 2 + 8;
+        const goalRight = this.goalPost.x + this.goalPost.displayWidth / 2 - 8;
         const goalTop = this.goalPost.y - this.goalPost.displayHeight / 2;
-        const goalBottom = this.goalPost.y + this.goalPost.displayHeight / 2;
+        const goalBottom =
+          this.goalPost.y + this.goalPost.displayHeight / 2 - 90;
+
+        if (this.debug) {
+          this.goalDebugGraphics.clear();
+          this.goalDebugGraphics.lineStyle(2, 0xff0000, 0.7);
+          this.goalDebugGraphics.strokeRect(
+            goalLeft,
+            goalTop,
+            goalRight - goalLeft,
+            goalBottom - goalTop
+          );
+        }
 
         if (
           this.football.x > goalLeft &&
@@ -113,7 +126,6 @@ export class Game extends Scene {
         ) {
           this.footballInGoal = true;
           if (!this.scoreAdded) {
-            // Calculate and update score
             const kickScore = Math.round(
               this.lastKickPowerRatio * (1 - this.lastKickErrorImpact) * 100
             );
@@ -121,30 +133,25 @@ export class Game extends Scene {
             this.scoreText.setText(`Score: ${this.score}`);
             this.scoreAdded = true;
             console.log(`Goal scored! +${kickScore} points`);
-
-            // Play the goal sound
             this.sound.play("goal");
 
-            // Position the text just above the goalPost.
-            // Here we subtract a little extra (10 pixels) from the top edge of the goalPost.
             const goalX = this.goalPost.x;
-            const goalY = this.goalPost.y - this.goalPost.displayHeight / 2 - 10;
+            const goalY =
+              this.goalPost.y - this.goalPost.displayHeight / 2 - 10;
 
-            // Create the text with a 24px font size.
-            const goalText = this.add.text(goalX, goalY, "GOAL SCORED!", {
-              fontFamily: "standard",
-              fontSize: "24px",
-              color: "#ffffff", // start with white
-            })
+            const goalText = this.add
+              .text(goalX, goalY, "GOAL SCORED!", {
+                fontFamily: "standard",
+                fontSize: "24px",
+                color: "#ffffff",
+              })
               .setOrigin(0.5)
-              .setDepth(8); // ensure it appears on top
+              .setDepth(8);
 
-            // Create a timed event to toggle the text color every 100ms.
             const flashEvent = this.time.addEvent({
               delay: 100,
               loop: true,
               callback: () => {
-                // Toggle between white and black
                 if (goalText.style.color === "#ffffff") {
                   goalText.setColor("#000000");
                 } else {
@@ -153,7 +160,6 @@ export class Game extends Scene {
               },
             });
 
-            // Remove the flashing text (and its flash event) after 1.5 seconds.
             this.time.delayedCall(1500, () => {
               flashEvent.remove();
               goalText.destroy();
@@ -265,6 +271,9 @@ export class Game extends Scene {
       .image(sceneWidth / 2, 178, "goalPost")
       .setOrigin(0.5, 0.5);
     this.goalPost.setDepth(5);
+
+    this.goalDebugGraphics = this.add.graphics();
+    this.goalDebugGraphics.setDepth(6);
   }
 
   createBar(x, y, numBars, segmentWidth, segmentHeight, labelText) {
