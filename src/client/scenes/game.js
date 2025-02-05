@@ -101,10 +101,10 @@ export class Game extends Scene {
       this.football
     ) {
       if (this.football.y > this.prevFootballY) {
-        const goalLeft = this.goalPost.x - this.goalPost.displayWidth / 2 + 8;
-        const goalRight = this.goalPost.x + this.goalPost.displayWidth / 2 - 8;
-        const goalTop = this.goalPost.y - this.goalPost.displayHeight / 2;
-        const goalBottom =
+        let goalLeft = this.goalPost.x - this.goalPost.displayWidth / 2 + 8;
+        let goalRight = this.goalPost.x + this.goalPost.displayWidth / 2 - 8;
+        let goalTop = this.goalPost.y - this.goalPost.displayHeight / 2;
+        let goalBottom =
           this.goalPost.y + this.goalPost.displayHeight / 2 - 90;
 
         if (this.debug) {
@@ -469,6 +469,13 @@ export class Game extends Scene {
       this.initialFootballPosition.x,
       this.initialFootballPosition.y
     );
+
+    const sceneWidth = this.scale.width;
+    const minX = 100;
+    const maxX = sceneWidth - 100;
+    const randomX = Phaser.Math.Between(minX, maxX);
+
+    this.goalPost.setPosition(randomX, 178);
 
     this.prevFootballY = this.football.y;
     this.footballInGoal = false;
