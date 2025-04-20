@@ -16,6 +16,12 @@ export class Game extends Scene {
     this.load.image("cloudSmall", "./assets/sprites/cloud-small-desktop.png");
     this.load.image("cloudLarge", "./assets/sprites/cloud-large-desktop.png");
 
+    this.load.atlas(
+      "flagWindLow",
+      "./assets/sprites/flag-wind-low-sheet.png",
+      "./assets/sprites/flag-wind-low.json"
+    );
+
     this.load.audio("barPause", "assets/sounds/barPause.wav");
     this.load.audio("refWhistle", "assets/sounds/refWhistle.wav");
     this.load.audio("goal", "assets/sounds/goal.wav");
@@ -62,6 +68,15 @@ export class Game extends Scene {
       })
       .setOrigin(1, 0);
 
+    this.timerSeconds = 90;
+    this.timerText = this.add
+      .text(width - padding, padding + 20, this.formatTime(this.timerSeconds), {
+        fontFamily: "standard",
+        fontSize: "16px",
+        color: "#ffffff",
+      })
+      .setOrigin(1, 0);
+
     this.input.enabled = false;
 
     let countdownValue = 3;
@@ -84,6 +99,12 @@ export class Game extends Scene {
           this.countdownText.destroy();
           this.input.enabled = true;
           this.sound.play("refWhistle");
+          this.time.addEvent({
+            delay: 1000,
+            callback: this.updateTimer,
+            callbackScope: this,
+            loop: true,
+          });
         } else {
           this.countdownText.setText(countdownValue);
         }
@@ -92,6 +113,26 @@ export class Game extends Scene {
     });
 
     this.setupInput();
+  }
+
+  formatTime(seconds) {
+    let minutes = Math.floor(seconds / 60);
+    let secs = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  }
+
+  updateTimer() {
+    if (this.timerSeconds > 0) {
+      this.timerSeconds--;
+      this.timerText.setText(this.formatTime(this.timerSeconds));
+
+      if (this.timerSeconds === 0) {
+        this.input.enabled = false;
+        this.scene.start("Scoreboard");
+      }
+    }
   }
 
   update(time, delta) {
@@ -274,6 +315,40 @@ export class Game extends Scene {
 
     this.goalDebugGraphics = this.add.graphics();
     this.goalDebugGraphics.setDepth(6);
+
+    if (!this.anims.get("flagWindLowAnim")) {
+      this.anims.create({
+        key: "flagWindLowAnim",
+        frames: [
+          { key: "flagWindLow", frame: "flag-wind-low 0.aseprite", duration: 125 },
+          { key: "flagWindLow", frame: "flag-wind-low 1.aseprite", duration: 125 },
+          { key: "flagWindLow", frame: "flag-wind-low 2.aseprite", duration: 125 }
+        ],
+        repeat: -1,
+      });
+    }
+
+    this.flagWindLowLeft = this.add
+      .sprite(0, 0, "flagWindLow")
+      .setOrigin(0.5, 0.5);
+    this.flagWindLowLeft.play("flagWindLowAnim");
+
+    this.flagWindLowRight = this.add
+      .sprite(0, 0, "flagWindLow")
+      .setOrigin(0.5, 0.5);
+    this.flagWindLowRight.play("flagWindLowAnim");
+
+    this.updateFlagPositions();
+  }
+
+  updateFlagPositions() {
+    const leftFlagX = this.goalPost.x - this.goalPost.displayWidth / 2 + 14;
+    const leftFlagY = this.goalPost.y - this.goalPost.displayHeight / 2 + 14;
+    this.flagWindLowLeft.setPosition(leftFlagX, leftFlagY);
+
+    const rightFlagX = this.goalPost.x + this.goalPost.displayWidth / 2 + 6;
+    const rightFlagY = this.goalPost.y - this.goalPost.displayHeight / 2 + 14;
+    this.flagWindLowRight.setPosition(rightFlagX, rightFlagY);
   }
 
   createBar(x, y, numBars, segmentWidth, segmentHeight, labelText) {
@@ -421,7 +496,7 @@ export class Game extends Scene {
       this.lastKickErrorImpact = errorImpact;
 
       const baseXDrift = 60;
-      const driftMultiplier = 35;
+      const driftMultiplier = 30;
       let xDrift = baseXDrift * (1 + errorImpact * driftMultiplier);
       if (this.accuracyBar.currentSelectedIndex < midIndex) {
         xDrift = xDrift * -1;
@@ -476,6 +551,7 @@ export class Game extends Scene {
     const randomX = Phaser.Math.Between(minX, maxX);
 
     this.goalPost.setPosition(randomX, 178);
+    this.updateFlagPositions();
 
     this.prevFootballY = this.football.y;
     this.footballInGoal = false;
